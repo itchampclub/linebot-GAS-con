@@ -57,7 +57,7 @@ function doPost(e) {
         var displayName = profiledata.displayName;
         var statusMessage = profiledata.statusMessage;
         var pictureUrl = profiledata.pictureUrl;
-
+        var confcheck = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
         
         //message type
         switch (type) {
@@ -67,17 +67,7 @@ function doPost(e) {
             var messageType = event.message.type;
             var messageId = event.message.id;
             var messageText = event.message.text;
-            if(messageText == "ฝ่ายขาย"){
-            var mess = [{'type': 'text', 'text': 'กรุณาระบุ\n-รุ่นรถ\n-ทะเบียน\n-เบอร์โทรติดต่อ'}];
-            replyMsg(replyToken, mess, channelToken);
-            var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
-            for(var i = 0;i<uid.length; i++){
-               if(userId == uid[i][0]){
-                  sheet.getRange(i+2,8).setValue("1");
-               }
-             }
-            }
-            else if(messageText.indexOf("conf ")>-1){
+            if(messageText.indexOf("conf ")>-1){
             var confId = messageText.split(' ',2)[1];
             var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
             for(var i = 0;i<uid.length; i++){
@@ -89,24 +79,27 @@ function doPost(e) {
               }
             }
             else{
-            var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
-            for(var i = 0;i<uid.length; i++){
-            if(userId == uid[i][0]){
-            var save = sheet.getRange(i+2,8).getValue();
-               if(save == "1"){
-               for(var i = 0;i<uid.length; i++){
-               if(userId == uid[i][0]){
-                  sheet.getRange(i+2,5).setValue(messageText);
-                  sheet.getRange(i+2,8).setValue("0");
-                  var mess = [{'type': 'text', 'text': 'ได้รับข้อมูลของท่านแล้ว'}];
+            for(var x = 0;x<confcheck.length; x++){
+               if(userId == confcheck[x][0]){
+               var confstatus = sheet.getRange(i+2,5).getValue();
+               var conftrue = true;
+            if(confstatus == true){
+            if(messageText == "ทดสอบ"){
+                  var mess = [{'type': 'text', 'text': 'ข้อความทดสอบ ยืนยันแล้ว'}];
+                  replyMsg(replyToken, mess, channelToken);
+            }
+            else{
+                  var mess = [{'type': 'text', 'text': messageText}];
                   replyMsg(replyToken, mess, channelToken);
                }
-             }
-            }
               }
-             }
+             else{
+            var mess = [{'type': 'text', 'text': "ไอดีท่านยังไม่ได้รับการยืนยัน"}];
+            replyMsg(replyToken, mess, channelToken);
+                }
+              }
             }
-
+          }
             break;
           case 'join':
             var mess = [{'type': 'text', 'text': "join"}];
