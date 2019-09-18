@@ -1,5 +1,5 @@
 //active
-var channelToken = "oB+dxq4x/QW0LK5ChAdkW8lA/NB45OZBqL9esFEklV4HE+s0s/uYj87W/pFC8TVux4iE28au22uaTj7by26TAeG+yYwl4bgAvV4xam3djBZRhaC2iYxroQNVYYqyfv84hAsnHS8/Di9m6w7OP8LElQdB04t89/1O/w1cDnyilFU=";
+var channelToken = "kUiASstcfJuMIEjuVS5TONkGWRAMD4cX9Y0QU9I3LmEjNEoD2Pzl1YshK5raIrm3GnCeI6a084YzOv+OlhuRpXJoMeeBj2+owPqCVqUMnibhY8c/qymKkt3V7CNnaJZnBsJHBBr6ziMZ6KHOPz9NpAdB04t89/1O/w1cDnyilFU=";
 var ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1Xp34vfiK5x7qkToff4rC2rH8RKokvKieGwszLaqlaaM/edit#gid=0");
 var sheet = ss.getSheetByName("data");
 
@@ -133,7 +133,66 @@ function doPost(e) {
                     var img = '=IMAGE("'+pictureUrl+'")';
                     sheet.appendRow([userId, displayName, statusMessage, img, "false"]);
                     var admId = "Uf879a6ef33f584bb96f7053e564b8376";
-                    var mess = [{'type': 'text', 'text': 'conf '+userId}];
+                    var mess = [{
+        "type": "flex",
+        "altText": "confirm or not!!",
+        "contents": {
+  "type": "bubble",
+  "hero": {
+    "type": "image",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover",
+    "url": pictureUrl
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "md",
+    "contents": [
+      {
+        "type": "text",
+        "text": displayName,
+        "size": "xl",
+        "weight": "bold",
+        "align": "center"
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "horizontal",
+    "contents": [
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#41A317",
+        "action": {
+          "type": "message",
+          "label": "CONFIRM",
+          "text": "conf "+userId
+        },
+        "gravity": "center"
+      },
+      {
+        "type": "separator",
+        "margin": "sm"
+      },
+      {
+        "type": "button",
+        "style": "primary",
+        "color": "#9F000F",
+        "action": {
+          "type": "message",
+          "label": "REJECT",
+          "text": "REJECT"
+        },
+        "gravity": "center"
+      }
+    ]
+  }
+}
+        }];
                     pushMsg(admId, mess, channelToken);
                    }
             break;
