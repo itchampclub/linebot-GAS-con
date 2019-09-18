@@ -82,7 +82,6 @@ function doPost(e) {
             for(var x = 0;x<confcheck.length; x++){
                if(userId == confcheck[x][0]){
                var confstatus = sheet.getRange(i+2,5).getValue();
-               var conftrue = true;
             if(confstatus == true){
             if(messageText == "ทดสอบ"){
                   var mess = [{'type': 'text', 'text': 'ข้อความทดสอบ ยืนยันแล้ว'}];
