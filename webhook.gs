@@ -1,6 +1,6 @@
 //active
-var channelToken = "kUiASstcfJuMIEjuVS5TONkGWRAMD4cX9Y0QU9I3LmEjNEoD2Pzl1YshK5raIrm3GnCeI6a084YzOv+OlhuRpXJoMeeBj2+owPqCVqUMnibhY8c/qymKkt3V7CNnaJZnBsJHBBr6ziMZ6KHOPz9NpAdB04t89/1O/w1cDnyilFU=";
-var ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1Xp34vfiK5x7qkToff4rC2rH8RKokvKieGwszLaqlaaM/edit#gid=0");
+var channelToken = "kUiASstcfJuMIEjuVS5TONXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXymKkt3V7CNnaJZnBsJHBBr6ziMZ6KHOPz9NpAdB04t89/1O/w1cDnyilFU=";
+var ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XXXXXXXXXXXXXXXXXXXXXXXXXXXGwszLaqlaaM/edit#gid=0");
 var sheet = ss.getSheetByName("data");
 
 function replyMsg(replyToken, Msg, channelToken) {
@@ -132,7 +132,7 @@ function doPost(e) {
                    if(!already){
                     var img = '=IMAGE("'+pictureUrl+'")';
                     sheet.appendRow([userId, displayName, statusMessage, img, "false"]);
-                    var admId = "Uf879a6ef33f584bb96f7053e564b8376";
+                    var admId = "Uf879a6ef33XXXX----UserID ผู้ดูแล--XXX53e564b8376";
                     var mess = [{
         "type": "flex",
         "altText": "confirm or not!!",
