@@ -77,6 +77,17 @@ function doPost(e) {
                }
              }
             }
+            else if(messageText.indexOf("conf ")>-1){
+            var confId = messageText.split(' ',2)[1];
+            var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
+            for(var i = 0;i<uid.length; i++){
+            if(confId == uid[i][0]){
+              sheet.getRange(i+2,5).setValue("TRUE");
+              var mess = [{'type': 'text', 'text': 'ได้รับการยืนยันจากผู้ดูแล'}];
+              pushMsg(confId, mess, channelToken);
+                }
+              }
+            }
             else{
             var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
             for(var i = 0;i<uid.length; i++){
@@ -86,26 +97,6 @@ function doPost(e) {
                for(var i = 0;i<uid.length; i++){
                if(userId == uid[i][0]){
                   sheet.getRange(i+2,5).setValue(messageText);
-                  sheet.getRange(i+2,8).setValue("0");
-                  var mess = [{'type': 'text', 'text': 'ได้รับข้อมูลของท่านแล้ว'}];
-                  replyMsg(replyToken, mess, channelToken);
-               }
-             }
-            }
-               else if(save == "2"){
-               for(var i = 0;i<uid.length; i++){
-               if(userId == uid[i][0]){
-                  sheet.getRange(i+2,6).setValue(messageText);
-                  sheet.getRange(i+2,8).setValue("0");
-                  var mess = [{'type': 'text', 'text': 'ได้รับข้อมูลของท่านแล้ว'}];
-                  replyMsg(replyToken, mess, channelToken);
-               }
-             }
-            }
-               else if(save == "3"){
-               for(var i = 0;i<uid.length; i++){
-               if(userId == uid[i][0]){
-                  sheet.getRange(i+2,7).setValue(messageText);
                   sheet.getRange(i+2,8).setValue("0");
                   var mess = [{'type': 'text', 'text': 'ได้รับข้อมูลของท่านแล้ว'}];
                   replyMsg(replyToken, mess, channelToken);
@@ -134,8 +125,8 @@ function doPost(e) {
             replyMsg(replyToken, mess, channelToken);
             break;
           case 'follow':
-         //   var mess = [{'type': 'text', 'text': "follow"}];
-         //  replyMsg(replyToken, mess, channelToken);
+            var mess = [{'type': 'text', 'text': "โปรดรอการยืนยันจากผู้ดูแล"}];
+            replyMsg(replyToken, mess, channelToken);
             var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
                 for(var i = 0;i<uid.length; i++){
                    if(userId == uid[i][0]){
@@ -148,9 +139,9 @@ function doPost(e) {
                    if(!already){
                     var img = '=IMAGE("'+pictureUrl+'")';
                     sheet.appendRow([userId, displayName, statusMessage, img, "false"]);
-                   // var admId = "";
-                  //  var mess = [{'type': 'text', 'text': 'กรุณาระบุ\n-รุ่นรถ\n-ทะเบียน\n-เบอร์โทรติดต่อ'}];
-                  //  pushMsg(replyToken, mess, channelToken);
+                    var admId = "Uf879a6ef33f584bb96f7053e564b8376";
+                    var mess = [{'type': 'text', 'text': 'conf '+userId}];
+                    pushMsg(admId, mess, channelToken);
                    }
             break;
           case 'unfollow':
