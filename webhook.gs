@@ -1,7 +1,11 @@
-//active
-var channelToken = "kUiASstcfJuMIEjuVS5TONXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXymKkt3V7CNnaJZnBsJHBBr6ziMZ6KHOPz9NpAdB04t89/1O/w1cDnyilFU=";
-var ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XXXXXXXXXXXXXXXXXXXXXXXXXXXGwszLaqlaaM/edit#gid=0");
+var channelToken = "59rotQ+Han4OF0IOQqEZIxPmHsjdTN5h5jYhxcx+NLPBaa3PeU/EvXyFyNP84Sbe9f6yUkkj8F7w1/0AIrEGdPLhN2pVuK8JEZRAkkTJiGKAaOD7owQVPErq73SS2FaFu3uErXHPrXm0uqvUkojElQdB04t89/1O/w1cDnyilFU=";
+var ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1_eGx9KSAlgz2i34oPmRfsOxSly3B8DTygznrBUuJkt8/edit#gid=0");
 var sheet = ss.getSheetByName("data");
+var sheet2 = ss.getSheetByName("test");
+var admId = "Uf879a6ef33f584bb96f7053e564b8376";
+
+var confcheck = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
+var testdata = sheet2.getRange(2, 1, sheet2.getLastRow(),sheet2.getLastColumn()).getValues();
 
 function replyMsg(replyToken, Msg, channelToken) {
   var url = 'https://api.line.me/v2/bot/message/reply';
@@ -36,11 +40,9 @@ function pushMsg(usrId, Msg, channelToken) {
 }
 
 function doPost(e) {
-  var value = JSON.parse(e.postData.contents);
-    var events = value.events;
-    if (events != null) {
-      for (var i in events) {
-        var event = events[i];
+        var value = JSON.parse(e.postData.contents);
+        var events = value.events;
+        var event = events[0];
         var type = event.type;
         var replyToken = event.replyToken;
         var sourceType = event.source.type;
@@ -57,7 +59,11 @@ function doPost(e) {
         var displayName = profiledata.displayName;
         var statusMessage = profiledata.statusMessage;
         var pictureUrl = profiledata.pictureUrl;
-        var confcheck = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
+
+
+
+        
+        
         
         //message type
         switch (type) {
@@ -67,29 +73,59 @@ function doPost(e) {
             var messageType = event.message.type;
             var messageId = event.message.id;
             var messageText = event.message.text;
-            if(messageText.indexOf("conf ")>-1){
-            var confId = messageText.split(' ',2)[1];
+
+            if(messageText.indexOf("conf ")>-1){            //Admin
+if(userId == admId){
+              var confId = messageText.split(' ',2)[1];
             var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
             for(var i = 0;i<uid.length; i++){
             if(confId == uid[i][0]){
               sheet.getRange(i+2,5).setValue("TRUE");
-              var mess = [{'type': 'text', 'text': 'ได้รับการยืนยันจากผู้ดูแล'}];
+              var mess = [{'type': 'text', 'text': 'ได้รับสิทธิ์ใช้งานจากผู้ดูแล'}];
               pushMsg(confId, mess, channelToken);
                 }
               }
+}else{
+                  var mess = [{'type': 'text', 'text': 'คุณไม่มีสิทธิ์ในการใช้คำสั่งนี้'}];
+                  replyMsg(replyToken, mess, channelToken);
+}
+            }else if(messageText.indexOf("uncon ")>-1){
+if(userId == admId){
+              var confId = messageText.split(' ',2)[1];
+            var uid = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
+            for(var i = 0;i<uid.length; i++){
+            if(confId == uid[i][0]){
+              sheet.getRange(i+2,5).setValue("FALSE");
+              var mess = [{'type': 'text', 'text': 'ยกเลิกสิทธิ์ใช้งานจากผู้ดูแล'}];
+              pushMsg(confId, mess, channelToken);
+                }
+              }
+}else{
+                  var mess = [{'type': 'text', 'text': 'คุณไม่มีสิทธิ์ในการใช้คำสั่งนี้'}];
+                  replyMsg(replyToken, mess, channelToken);
+}
             }
-            else{
-            for(var x = 0;x<confcheck.length; x++){
-               if(userId == confcheck[x][0]){
+            else{                      //User
+            for(var i = 0;i<confcheck.length; i++){
+               if(userId == confcheck[i][0]){
+                 var userf = true;
                var confstatus = sheet.getRange(i+2,5).getValue();
             if(confstatus == true){
-            if(messageText == "ทดสอบ"){
-                  var mess = [{'type': 'text', 'text': 'ข้อความทดสอบ ยืนยันแล้ว'}];
+            if(messageText.length >= 1){
+
+            for(var i = 0;i<testdata.length; i++){                      //Sheet2 q&a
+            if(messageText == testdata[i][0]){                    //Sheet2 for loop match question.
+              var isquestion = true
+              var ans = sheet2.getRange(i+2,2).getValue();       //Sheet2 answer
+              var mess = [{'type': 'text', 'text': ans}];
+              replyMsg(replyToken, mess, channelToken);
+                }
+              }
+              
+              if(!isquestion){
+                  var mess = [{'type': 'text', 'text': 'ไม่พบคำถามในรายการ >_\n'+messageText}];
                   replyMsg(replyToken, mess, channelToken);
-            }
-            else{
-                  var mess = [{'type': 'text', 'text': messageText}];
-                  replyMsg(replyToken, mess, channelToken);
+              }
                }
               }
              else{
@@ -100,22 +136,9 @@ function doPost(e) {
             }
           }
             break;
-          case 'join':
-            var mess = [{'type': 'text', 'text': "join"}];
-            replyMsg(replyToken, mess, channelToken);
-            break;
-          case 'leave':
-            var mess = [{'type': 'text', 'text': "leave"}];
-            replyMsg(replyToken, mess, channelToken);
-            break;
-          case 'memberLeft':
-            var mess = [{'type': 'text', 'text': "memberLeft"}];
-            replyMsg(replyToken, mess, channelToken);
-            break;
-          case 'memberJoined':
-            var mess = [{'type': 'text', 'text': "memberJoined"}];
-            replyMsg(replyToken, mess, channelToken);
-            break;
+
+
+
           case 'follow':
             var mess = [{'type': 'text', 'text': "โปรดรอการยืนยันจากผู้ดูแล"}];
             replyMsg(replyToken, mess, channelToken);
@@ -130,8 +153,10 @@ function doPost(e) {
                 }
                    if(!already){
                     var img = '=IMAGE("'+pictureUrl+'")';
-                    sheet.appendRow([userId, displayName, statusMessage, img, "false"]);
-                    var admId = "Uf879a6ef33XXXX----UserID ผู้ดูแล--XXX53e564b8376";
+                    sheet.appendRow([userId, displayName, statusMessage, img, 'false']);
+
+                   
+            
                     var mess = [{
         "type": "flex",
         "altText": "confirm or not!!",
@@ -184,7 +209,7 @@ function doPost(e) {
         "action": {
           "type": "message",
           "label": "REJECT",
-          "text": "REJECT"
+          "text": "uncon "+userId
         },
         "gravity": "center"
       }
@@ -192,16 +217,12 @@ function doPost(e) {
   }
 }
         }];
+
+
                     pushMsg(admId, mess, channelToken);
                    }
-            break;
-          case 'unfollow':
-            var mess = [{'type': 'text', 'text': "unfollow"}];
-            replyMsg(replyToken, mess, channelToken);
             break;
           default:
             break;
         }
       }
-   }
-}
