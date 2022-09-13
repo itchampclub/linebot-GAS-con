@@ -4,6 +4,7 @@ var sheet = ss.getSheetByName("data");
 var sheet2 = ss.getSheetByName("test");
 var admId = "Uf879a6ef33f584bb96f7053e564b8376";
 
+
 var confcheck = sheet.getRange(2, 1, sheet.getLastRow(),sheet.getLastColumn()).getValues();
 var testdata = sheet2.getRange(2, 1, sheet2.getLastRow(),sheet2.getLastColumn()).getValues();
 
@@ -106,32 +107,51 @@ if(userId == admId){
 }
             }
             else{                      //User
-            for(var i = 0;i<confcheck.length; i++){
-               if(userId == confcheck[i][0]){
-                 var userf = true;
+            for(var i = 0;i<confcheck.length; i++){                //for loop, Match user by UID.
+               if(userId == confcheck[i][0]){  
                var confstatus = sheet.getRange(i+2,5).getValue();
-            if(confstatus == true){
-            if(messageText.length >= 1){
+            if(confstatus == true){                                            //เพิ่มเพื่อนแล้ว+ได้รับการยืนยันแล้ว
 
-            for(var i = 0;i<testdata.length; i++){                      //Sheet2 q&a
-            if(messageText == testdata[i][0]){                    //Sheet2 for loop match question.
-              var isquestion = true
-              var ans = sheet2.getRange(i+2,2).getValue();       //Sheet2 answer
-              var mess = [{'type': 'text', 'text': ans}];
-              replyMsg(replyToken, mess, channelToken);
+
+            if(messageText.length >= 1){ //messageText คือข้อความจาก User * .length >= 1 คือการตรวจสอบความยาวของข้อความ เมื่อ messageText มีความยาวมากกว่าหรือเท่ากับ 1 อักษร จะเข้าเงื่อนไขนี้
+
+
+// กรณีที่คาดว่าจะมีข้อมูลซ้ำกันเมื่อค้นหา
+ var messdata = "รายการข้อมูล"   //สร้างตัวแปรเริ่มต้นเพื่อตอบกลับเมื่อพบข้อมูล >= 1 แถว
+
+
+            for(var i = 0;i<testdata.length; i++){                      //ค้นหาคำถาม Sheet2 จากตัวแปร testdata (sheet2.getRange(2, 1) 2,1 คือ row,column เริ่มต้น 
+            if(messageText == testdata[i][0]){                    //ค้นหาคำถาม Sheet2   (messageText = ข้อความจาก user / testdata = Sheet2 Column1 ที่เรา loop เพื่อเทียบค่า * [i] จะนับจาก 0 = row 1 ไปจนถึง row สุดท้ายที่มีข้อมูล * [0] = ค้นหาจาก column เริ่มต้นตามที่กำหนดในตัวแปร testdata ([0] = column 1, [1] = column 2)
+           
+              var isquestion = true // ตัวแปร isquestion ใช้สำหรับยืนยันการพบข้อมูลที่ตรงกัน >= 1 row
+
+              var ans = sheet2.getRange(i+2,2).getValue();       //Sheet2 i+2 (i = row ที่พบคำถามเริ่มนับจาก 0 / +2 คือ +1 สำหรับข้ามหัวแถวและ +1 สำหรับเพิ่ม i ให้ i ที่เริ่มนับจาก 0 เป็นเริ่มนับจาก 1) 
+
+                                // กรณีต้องการดึงข้อมูล column อื่นๆจาก row เดียวกัน สามารถเพิ่มตัวแปรตามตัวอย่างได้เลย
+              var ansrow3 = sheet2.getRange(i+2,3).getValue(); 
+              var ansrow4 = sheet2.getRange(i+2,4).getValue(); 
+
+        messdata += '\nRow = '+(i+2)+'\ncol2'+ans+'\ncol3'+ansrow3+'\ncol3'+ansrow4   // messdata += (+= คือเพิ่มข้อมูลเข้าไปในตัวแปร messdata ที่มีอยู่แล้วตามจำนวน row ที่ค้นพบ * \n คือขึ้นบรรทัดใหม่ )
+
                 }
               }
-              
-              if(!isquestion){
-                  var mess = [{'type': 'text', 'text': 'ไม่พบคำถามในรายการ >_\n'+messageText}];
-                  replyMsg(replyToken, mess, channelToken);
+
+              if(!isquestion){ // หากไม่พบข้อมูลใดๆ ตัวแปร var isquestion จะไม่ถูกกำหนดขึ้น และเข้าเงื่อนไข !isquestion ( isquestion = false)
+                  var messdata = 'ไม่พบคำถามในรายการ >_\n'+messageText;
               }
+
+              var mess = [{'type': 'text', 'text': messdata}];
+                  replyMsg(replyToken, mess, channelToken);  
                }
+
               }
-             else{
+             else{                                                                  //เพิ่มเพื่อนแล้วแต่ยังไม่ได้รับการยืนยัน
             var mess = [{'type': 'text', 'text': "ไอดีท่านยังไม่ได้รับการยืนยัน"}];
             replyMsg(replyToken, mess, channelToken);
                 }
+
+
+
               }
             }
           }
